@@ -1,27 +1,40 @@
 const { ethers } = require("ethers");
-const { ethToken, bscToken, ethProvider, bscProvider } = require("./index");
-
-const { ADDRESS } = process.env;
+const {
+  ethToken,
+  bscToken,
+  ethProvider,
+  bscProvider,
+  ADDRESS,
+} = require("./index");
 
 async function run() {
   try {
     const ethTokenName = await ethToken.name();
-    const ethTokenMintTx = await ethToken.mint(ADDRESS, 100);
+    const ethTokenDecimals = await ethToken.decimals();
+    const gasPrice = await ethProvider.getFeeData();
+    const ethTokenMintTx = await ethToken.mint(
+      ADDRESS,
+      ethers.parseUnits("300", ethTokenDecimals)
+    );
     const ethTxReceipt = await ethProvider.waitForTransaction(
       ethTokenMintTx.hash
     );
     console.log(
-      `Minted 100 ${ethTokenName} to ${ADDRESS} on Sepolia\nGas used: ${Number(
+      `Minted 300 ${ethTokenName} to ${ADDRESS} on Sepolia\nGas used: ${Number(
         ethTxReceipt.gasUsed
       )}\nGas price: ${Number(ethTxReceipt.gasPrice)}`
     );
     const bscTokenName = await bscToken.name();
-    const bscTokenMintTx = await bscToken.mint(ADDRESS, 100);
+    const bscTokenDecimals = await bscToken.decimals();
+    const bscTokenMintTx = await bscToken.mint(
+      ADDRESS,
+      ethers.parseUnits("300", bscTokenDecimals)
+    );
     const bscTxReceipt = await bscProvider.waitForTransaction(
       bscTokenMintTx.hash
     );
     console.log(
-      `Minted 100 ${bscTokenName} to ${ADDRESS} on BSC Testnet\nGas used: ${Number(
+      `Minted 300 ${bscTokenName} to ${ADDRESS} on BSC Testnet\nGas used: ${Number(
         bscTxReceipt.gasUsed
       )}\nGas price: ${Number(bscTxReceipt.gasPrice)}`
     );
